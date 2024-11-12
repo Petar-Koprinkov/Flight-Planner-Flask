@@ -1,4 +1,4 @@
-from flask import request, jsonify, abort, flash
+from flask import request, jsonify, abort
 from flight_planner.services import CityService, AirportService, FlightService
 
 
@@ -9,13 +9,7 @@ def register_routes(app):
         if request.method == 'POST':
             country = request.form.get('country')
             city = request.form.get('city')
-            if len(city) < 3:
-                flash('Please enter a valid city name!', category='error')
-            elif len(country) < 3:
-                flash('Please enter a valid country name!', category='error')
-            else:
-                flash('City created!', category='success')
-            return jsonify(CityService.create_city(request.json)), 201
+            return CityService.create_city(country, city), 201
         elif request.method == 'GET':
             try:
                 return CityService.get_all_cities()

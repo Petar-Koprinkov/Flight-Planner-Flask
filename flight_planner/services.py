@@ -1,4 +1,5 @@
 from flask import render_template
+from models import City
 
 
 class CityService:
@@ -7,7 +8,7 @@ class CityService:
         return render_template("cities.html")
 
     @staticmethod
-    def create_city():
+    def create_city(country, city):
         pass
 
 
