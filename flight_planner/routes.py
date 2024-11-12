@@ -1,15 +1,24 @@
-from flask import request, jsonify, abort
+from flask import request, jsonify, abort, flash
 from flight_planner.services import CityService, AirportService, FlightService
+
 
 def register_routes(app):
     # City endpoints
     @app.route('/cities/', methods=['POST', 'GET'])
     def manage_cities():
         if request.method == 'POST':
+            country = request.form.get('country')
+            city = request.form.get('city')
+            if len(city) < 3:
+                flash('Please enter a valid city name!', category='error')
+            elif len(country) < 3:
+                flash('Please enter a valid country name!', category='error')
+            else:
+                flash('City created!', category='success')
             return jsonify(CityService.create_city(request.json)), 201
         elif request.method == 'GET':
             try:
-                return jsonify(CityService.get_all_cities())
+                return CityService.get_all_cities()
             except Exception:
                 abort(404)
 
@@ -38,7 +47,7 @@ def register_routes(app):
             return jsonify(AirportService.delete_all_airports()), 204
         elif request.method == 'GET':
             try:
-                return jsonify(AirportService.get_all_airports())
+                return AirportService.get_all_airports()
             except Exception:
                 abort(404)
 
@@ -64,7 +73,7 @@ def register_routes(app):
             max_count = request.args.get('maxCount', default=50, type=int)
             sort_by = request.args.get('sortBy', default='departureTime', type=str)
             sort_order = request.args.get('sortOrder', default='ASC', type=str)
-            return jsonify(FlightService.get_all_flights(offset, max_count, sort_by, sort_order))
+            return FlightService.get_all_flights(offset, max_count, sort_by, sort_order)
 
     @app.route('/flights/search', methods=['POST'])
     def search_flights():
